@@ -7,4 +7,5 @@ ENV GO111MODULE=on
 
 RUN go get github.com/pilu/fresh
 RUN go get github.com/labstack/echo 
+RUN go get github.com/labstack/echo/middleware
 CMD ["fresh"]

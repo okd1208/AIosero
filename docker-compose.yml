@@ -16,3 +16,13 @@ services:
       - 8888:8888
     volumes:
       - ./server:/api
+
+  postgres:
+    container_name: postgres
+    build: ./postgres
+    ports:
+      - '5433:5432'
+    environment:
+      - POSTGRES_USER=osero
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=osero

@@ -1,7 +1,8 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <button @click="Send">Send</button>
+    <h1>Leaning Osero</h1>
+    <button @click="Send">PlayOsero</button>
+    <router-link to="/playBoard">play</router-link>
   </div>
 </template>
 
@@ -13,9 +14,6 @@ export default {
     return {
       info: null,
     }
-  },
-  props: {
-    msg: String
   },
   methods: {
     async Send() {

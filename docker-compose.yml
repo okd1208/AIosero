@@ -23,6 +23,6 @@ services:
     ports:
       - '5433:5432'
     environment:
-      - POSTGRES_USER=osero
+      - POSTGRES_USER=Othello
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=osero
+      - POSTGRES_DB=Othello

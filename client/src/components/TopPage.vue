@@ -1,7 +1,7 @@
 <template>
-  <div class="hello">
-    <h1>Leaning Osero</h1>
-    <button @click="Send">PlayOsero</button>
+  <div class="othelloboad">
+    <h1>Leaning Othello</h1>
+    <button @click="Send">PlayOthello</button>
     <router-link to="/playBoard">play</router-link>
   </div>
 </template>

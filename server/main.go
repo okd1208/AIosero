@@ -33,7 +33,7 @@ func main() {
 
 func dbTest() {
 	var Db *sql.DB
-	Db, err := sql.Open("postgres", "host=postgres user=osero password=password dbname=osero sslmode=disable")
+	Db, err := sql.Open("postgres", "host=postgres user=Othello password=password dbname=Othello sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}

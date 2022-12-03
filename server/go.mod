@@ -1,4 +1,4 @@
-module github.com/okd1208/AIosero
+module github.com/okd1208/OthelloLearning
 
 go 1.17
 

@@ -15,6 +15,7 @@ export default {
   data: function () {
     return {
       info: null,
+      userColor: "white",
       putPositions: {
         white: {
           1:[1],
@@ -24,14 +25,14 @@ export default {
           5:[5,8],
           6:[],
           7:[],
-          8:[8],
+          8:[],
         },
         black: {
           1:[],
           2:[],
           3:[],
-          4:[5,6,7,8],
-          5:[4],
+          4:[5,6,8],
+          5:[4,7],
           6:[],
           7:[],
           8:[],
@@ -58,7 +59,8 @@ export default {
           7:[],
           8:[],
         },
-      }
+      },
+      hitDiscsPosi: []
     }
   },
   methods: {
@@ -72,11 +74,12 @@ export default {
       console.log(this.info);
     },
     allSet() {
+      this.boardInit();
       const putPosi = this.putPositions;
       Object.keys(putPosi).forEach((color) => {
-        const tmpRow = putPosi[color];
-        Object.keys(tmpRow).forEach((row) => {
-          tmpRow[row].forEach(col => {
+        const tmpRows = putPosi[color];
+        Object.keys(tmpRows).forEach((row) => {
+          tmpRows[row].forEach(col => {
             this.updateNextPosi(row, col, color);
             const element = document.getElementById(`row${row}-col${col}`);
             element.classList.add(color);
@@ -84,9 +87,22 @@ export default {
         });
       });
     },
+    boardInit() {
+      const discs = document.querySelectorAll('.white, .black');
+      discs.forEach(el => {
+        el.classList.remove("white");
+        el.classList.remove("black");
+      });
+      Object.keys(this.nextPutPositions).forEach((color) => {
+        const tmpRows = this.nextPutPositions[color];
+        Object.keys(tmpRows).forEach((row) => {
+          tmpRows[row] = []
+        });
+      });
+    },
     updateNextPosi(row, col, color) {
-      row = Number(row)
-      console.log(`${color}:r${row}-c${col}`);
+      row = Number(row);
+      // console.log(`${color}:r${row}-c${col}`);
       const enemyColor = this.getReverseColor(color);
       for (let i = -1; i < 2 ; i++) {
         const r = row + i;
@@ -117,8 +133,15 @@ export default {
         }
       }
     },
-    isExistDisc(row,col,color) {
+    isExistDisc(row, col, color) {
       const arr = this.putPositions[color][row];
+      if(arr.indexOf(col) !== -1) {
+        return true;
+      }
+      return false;
+    },
+    isCnaPutDisc(row, col, color) {
+      const arr = this.nextPutPositions[color][row];
       if(arr.indexOf(col) !== -1) {
         return true;
       }
@@ -132,6 +155,8 @@ export default {
           const rc = this.getReverseColor(color);
           if (!this.isExistDisc(row, col, rc)) {
             lastCol = col;
+          } else {
+            this.hitDiscsPosi.push([row, col])
           }
           break;
         }
@@ -146,6 +171,8 @@ export default {
           const rc = this.getReverseColor(color);
           if (!this.isExistDisc(row, col, rc)) {
             lastRow = row;
+          } else {
+            this.hitDiscsPosi.push([row, col])
           }
           break;
         }
@@ -163,6 +190,8 @@ export default {
           if (!this.isExistDisc(row, col, rc)) {
             lastRow = row;
             lastCol = col;
+          } else {
+            this.hitDiscsPosi.push([row, col])
           }
           break;
         }
@@ -172,8 +201,53 @@ export default {
     getReverseColor (color) {
       return color === "white" ? "black" : "white";
     },
-    putDisc(row,col) {
-      console.log(row,col)
+    putDisc(row, col) {
+      if (!this.isCnaPutDisc(row, col, this.userColor)) {
+        return;
+      }
+      this.putPositions[this.userColor][row].push(col);
+      this.doReverse(row, col, this.userColor);
+      this.allSet();
+    },
+    doReverse(row, col, color) {
+      this.hitDiscsPosi = [];
+      this.updateNextPosi(row, col, color);
+      this.hitDiscsPosi.forEach(hitDisc => {
+        if(row === hitDisc[0]){
+          let cols = this.sortBySize(col, hitDisc[1]);
+          while(cols["low"]!==cols["heigh"]-1){
+            cols["low"]+=1;
+            this.reverseTarget(row, cols["low"], color)
+          }
+        } else if (col === hitDisc[1]) {
+          let rows = this.sortBySize(row, hitDisc[0]);
+          while(rows["low"]!==rows["heigh"]-1){
+            rows["low"]+=1;
+            this.reverseTarget(rows["low"], col, color)
+          }
+        } else {
+          let low = hitDisc[1] < col ? hitDisc : [row, col];
+          let heigh = hitDisc[1] > col ? hitDisc : [row, col];
+          // 右上か右下か判別
+          const increment = low[0] > heigh[0] ? -1: 1;
+          while(low[1]!==heigh[1]-1){
+            low[0]+=increment;
+            low[1]+=1;
+            this.reverseTarget(low[0], low[1], color);
+          }
+        }
+      })
+    },
+    reverseTarget(row, col, color){
+      const rc = this.getReverseColor(color);
+      var index = this.putPositions[rc][row].indexOf(col);
+      this.putPositions[rc][row].splice(index, 1);
+      this.putPositions[color][row].push(col);
+    },
+    sortBySize(a, b){
+      let low   = a < b ? a: b;
+      let heigh = a > b ? a: b;
+      return {"low": low, "heigh": heigh};
     }
   },
   mounted() {

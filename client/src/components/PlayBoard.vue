@@ -21,7 +21,7 @@ export default {
           2:[],
           3:[6],
           4:[4],
-          5:[5],
+          5:[5,8],
           6:[],
           7:[],
           8:[8],
@@ -98,14 +98,20 @@ export default {
           }
           if (this.isExistDisc(r,c,enemyColor)) {
             if (row === r) {
-              const lastCol = this.exploreHorizontal(r,c,enemyColor, c-col)
+              const lastCol = this.exploreHorizontal(r, c, enemyColor, c-col);
               if(lastCol) {
                 this.nextPutPositions[color][r].push(lastCol);
               }
             } else if (col === c) {
-              console.log("たて");
+              const lastRow = this.exploreVertical(r, c, enemyColor, r-row);
+              if(lastRow) {
+                this.nextPutPositions[color][lastRow].push(col);
+              }
             } else {
-              console.log("ななめ");
+              const lastPosi = this.exploreDiagonal(r, c, enemyColor, [r-row, c-col]);
+              if(lastPosi["row"] && lastPosi["col"]) {
+                this.nextPutPositions[color][lastPosi["row"]].push(lastPosi["col"]);
+              }
             }
           }
         }
@@ -132,6 +138,37 @@ export default {
       }
       return lastCol;
     },
+    exploreVertical(row, col, color, i) {
+      let lastRow = null;
+      while(row > 1 && row < 8){
+        row+=i;
+        if (!this.isExistDisc(row, col, color)) {
+          const rc = this.getReverseColor(color);
+          if (!this.isExistDisc(row, col, rc)) {
+            lastRow = row;
+          }
+          break;
+        }
+      }
+      return lastRow;
+    },
+    exploreDiagonal(row, col, color, i) {
+      let lastRow = null;
+      let lastCol = null;
+      while((row > 1 && row < 8) && (col > 1 && col < 8)){
+        row+=i[0];
+        col+=i[1];
+        if (!this.isExistDisc(row, col, color)) {
+          const rc = this.getReverseColor(color);
+          if (!this.isExistDisc(row, col, rc)) {
+            lastRow = row;
+            lastCol = col;
+          }
+          break;
+        }
+      }
+      return {row: lastRow, col: lastCol};
+    },
     getReverseColor (color) {
       return color === "white" ? "black" : "white";
     },
@@ -145,7 +182,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .othelloBoard {
   color: aliceblue;

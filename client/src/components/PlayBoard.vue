@@ -1,8 +1,8 @@
 <template>
   <div class="othelloBoard">
-    <div v-for="n of 8" :key="n" class="row">
-      <div v-for="i of 8" :key="i" class="col">
-        <div :id="getClassName(n,i)"></div>
+    <div v-for="row of 8" :key="row" class="row">
+      <div v-for="col of 8" :key="col" class="col" @click="putDisc(row,col)">
+        <div :id="getClassName(row,col)"></div>
       </div>
     </div>
   </div>
@@ -15,14 +15,50 @@ export default {
   data: function () {
     return {
       info: null,
-      white: {
-        4:[4],
-        5:[5]
+      putPositions: {
+        white: {
+          1:[1],
+          2:[],
+          3:[6],
+          4:[4],
+          5:[5],
+          6:[],
+          7:[],
+          8:[8],
+        },
+        black: {
+          1:[],
+          2:[],
+          3:[],
+          4:[5,6,7,8],
+          5:[4],
+          6:[],
+          7:[],
+          8:[],
+        },
       },
-      black: {
-        4:[5],
-        5:[4]
-      },
+      nextPutPositions: {
+        white: {
+          1:[],
+          2:[],
+          3:[],
+          4:[],
+          5:[],
+          6:[],
+          7:[],
+          8:[],
+        },
+        black: {
+          1:[],
+          2:[],
+          3:[],
+          4:[],
+          5:[],
+          6:[],
+          7:[],
+          8:[],
+        },
+      }
     }
   },
   methods: {
@@ -35,19 +71,76 @@ export default {
       .then(response => (this.info = response))
       console.log(this.info);
     },
-    allSet(arr, color) {
-      Object.keys(arr).forEach(function (row) {
-        arr[row].forEach(col => {
-          console.log(`row${row}-col${col}`);
-          var element = document.getElementById(`row${row}-col${col}`);
-          element.classList.add(color);
-        })
-    });
+    allSet() {
+      const putPosi = this.putPositions;
+      Object.keys(putPosi).forEach((color) => {
+        const tmpRow = putPosi[color];
+        Object.keys(tmpRow).forEach((row) => {
+          tmpRow[row].forEach(col => {
+            this.updateNextPosi(row, col, color);
+            const element = document.getElementById(`row${row}-col${col}`);
+            element.classList.add(color);
+          })
+        });
+      });
     },
+    updateNextPosi(row, col, color) {
+      row = Number(row)
+      console.log(`${color}:r${row}-c${col}`);
+      const enemyColor = this.getReverseColor(color);
+      for (let i = -1; i < 2 ; i++) {
+        const r = row + i;
+        if (r <= 0 || r > 8) {continue;}
+        for (let n = -1; n < 2 ; n++) {
+          const c = col + n;
+          if (c <= 0 || c > 8){
+            continue;
+          }
+          if (this.isExistDisc(r,c,enemyColor)) {
+            if (row === r) {
+              const lastCol = this.exploreHorizontal(r,c,enemyColor, c-col)
+              if(lastCol) {
+                this.nextPutPositions[color][r].push(lastCol);
+              }
+            } else if (col === c) {
+              console.log("たて");
+            } else {
+              console.log("ななめ");
+            }
+          }
+        }
+      }
+    },
+    isExistDisc(row,col,color) {
+      const arr = this.putPositions[color][row];
+      if(arr.indexOf(col) !== -1) {
+        return true;
+      }
+      return false;
+    },
+    exploreHorizontal(row, col, color, i) {
+      let lastCol = null;
+      while(col > 1 && col < 8){
+        col+=i;
+        if (!this.isExistDisc(row, col, color)) {
+          const rc = this.getReverseColor(color);
+          if (!this.isExistDisc(row, col, rc)) {
+            lastCol = col;
+          }
+          break;
+        }
+      }
+      return lastCol;
+    },
+    getReverseColor (color) {
+      return color === "white" ? "black" : "white";
+    },
+    putDisc(row,col) {
+      console.log(row,col)
+    }
   },
   mounted() {
-    this.allSet(this.white, "white");
-    this.allSet(this.black, "black");
+    this.allSet();
   }
 }
 </script>

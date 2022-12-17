@@ -1,7 +1,7 @@
 <template>
   <div class="othelloBoard">
     <div v-for="row of 8" :key="row" class="row">
-      <div v-for="col of 8" :key="col" class="col" @click="putDisc(row,col)">
+      <div v-for="col of 8" :key="col" class="col" @click="putDiscByUser(row,col)">
         <div :id="getClassName(row,col)"></div>
       </div>
     </div>
@@ -16,13 +16,16 @@ export default {
     return {
       info: null,
       userColor: "white",
+      userDiscCount: 0,
+      enemyrDiscCount: 0,
+      isUserTurn: true,
       putPositions: {
         white: {
-          1:[1],
+          1:[],
           2:[],
-          3:[6],
+          3:[],
           4:[4],
-          5:[5,8],
+          5:[5],
           6:[],
           7:[],
           8:[],
@@ -31,8 +34,8 @@ export default {
           1:[],
           2:[],
           3:[],
-          4:[5,6,8],
-          5:[4,7],
+          4:[5],
+          5:[4],
           6:[],
           7:[],
           8:[],
@@ -80,6 +83,7 @@ export default {
         const tmpRows = putPosi[color];
         Object.keys(tmpRows).forEach((row) => {
           tmpRows[row].forEach(col => {
+            color === this.userColor ? this.userDiscCount += 1 : this.enemyrDiscCount += 1;
             this.updateNextPosi(row, col, color);
             const element = document.getElementById(`row${row}-col${col}`);
             element.classList.add(color);
@@ -88,6 +92,8 @@ export default {
       });
     },
     boardInit() {
+      this.userDiscCount = 0;
+      this.enemyrDiscCount = 0;
       const discs = document.querySelectorAll('.white, .black');
       discs.forEach(el => {
         el.classList.remove("white");
@@ -98,6 +104,7 @@ export default {
         Object.keys(tmpRows).forEach((row) => {
           tmpRows[row] = []
         });
+        this.nextPutPositions[color] = tmpRows;
       });
     },
     updateNextPosi(row, col, color) {
@@ -140,7 +147,7 @@ export default {
       }
       return false;
     },
-    isCnaPutDisc(row, col, color) {
+    isCanPutDisc(row, col, color) {
       const arr = this.nextPutPositions[color][row];
       if(arr.indexOf(col) !== -1) {
         return true;
@@ -201,13 +208,40 @@ export default {
     getReverseColor (color) {
       return color === "white" ? "black" : "white";
     },
-    putDisc(row, col) {
-      if (!this.isCnaPutDisc(row, col, this.userColor)) {
+    putDiscByUser(row, col) {
+      if (!this.isCanPutDisc(row, col, this.userColor)) {
         return;
       }
       this.putPositions[this.userColor][row].push(col);
       this.doReverse(row, col, this.userColor);
       this.allSet();
+      if (this.isFinshGame()) {
+        return;
+      }
+      this.putDiscByEnemy();
+      while (this.isSkipTurn(this.userColor && !this.isFinshGame())) {
+        this.putDiscByEnemy();
+      }
+      if (this.isFinshGame()) {
+        return;
+      }
+    },
+    putDiscByEnemy() {
+      const rc = this.getReverseColor(this.userColor);
+      if (this.isSkipTurn(rc)) {
+        return;
+      }
+      while (this.enemyrDiscCount > 0) {
+        const i = Math.floor(Math.random() * 8 ) + 1;
+        if (this.nextPutPositions[rc][i].length !== 0) {
+          const n = Math.floor(Math.random() * (this.nextPutPositions[rc][i].length - 1));
+          const col = this.nextPutPositions[rc][i][n];
+          this.putPositions[rc][i].push(col);
+          this.doReverse(i, col, rc);
+          this.allSet();
+          break;
+        }
+      }
     },
     doReverse(row, col, color) {
       this.hitDiscsPosi = [];
@@ -248,6 +282,26 @@ export default {
       let low   = a < b ? a: b;
       let heigh = a > b ? a: b;
       return {"low": low, "heigh": heigh};
+    },
+    isSkipTurn(color) {
+      const tmpRows = this.nextPutPositions[color];
+      // forEach内でreturnできないため
+      var bool = true;
+      Object.keys(tmpRows).forEach((row) => {
+        if (tmpRows[row].length > 0) {
+          bool = false;
+          // return false;
+        }
+      });
+      return bool;
+    },
+    isFinshGame() {
+      if (this.userDiscCount + this.enemyrDiscCount === 64 || 
+        (this.isSkipTurn("white")&&this.isSkipTurn("black"))
+        ) {
+          return true;
+      }
+      return false;
     }
   },
   mounted() {

@@ -1,9 +1,15 @@
 <template>
-  <div class="othelloBoard">
-    <div v-for="row of 8" :key="row" class="row">
-      <div v-for="col of 8" :key="col" class="col" @click="putDiscByUser(row,col)">
-        <div :id="getClassName(row,col)"></div>
+  <div>
+    <div class="othello-board">
+      <div v-for="row of 8" :key="row" class="row">
+        <div v-for="col of 8" :key="col" class="col" @click="putDiscByUser(row,col)">
+          <div :id="getClassName(row,col)"></div>
+        </div>
       </div>
+    </div>
+    <div class="result-board" v-if="getResultText">
+      <h2>Game Finish !</h2>
+      <p>{{getResultText}}</p>
     </div>
   </div>
 </template>
@@ -306,12 +312,24 @@ export default {
   },
   mounted() {
     this.allSet();
+  },
+  computed: {
+    getResultText: function () {
+      if (!this.isFinshGame()) {
+        return null;
+      }
+      if (this.userDiscCount == this.enemyrDiscCount) {
+        return "引き分けです。";
+      }
+      const winnerColor = this.userDiscCount > this.enemyrDiscCount ? this.userColor : this.getReverseColor(this.userColor);
+      return `${winnerColor}プレイヤーの勝利です!`
+    }
   }
 }
 </script>
 
 <style scoped>
-.othelloBoard {
+.othello-board {
   color: aliceblue;
   margin: auto;
   width: 500px;
@@ -341,5 +359,16 @@ export default {
 }
 .black {
   background-color: black;
+}
+.result-board {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: black;
+  padding: 5%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
 }
 </style>

@@ -15,12 +15,12 @@
 </template>
 
 <script>
-import axios from 'axios';
+import BackendGatway from '@/mixins/backendGatway'
 export default {
   name: 'HelloWorld',
+  mixins: [BackendGatway],
   data: function () {
     return {
-      info: null,
       userColor: "white",
       userDiscCount: 0,
       enemyrDiscCount: 0,
@@ -75,12 +75,6 @@ export default {
   methods: {
     getClassName(row, col) {
       return `row${row}-col${col}`
-    },
-    async Send() {
-      axios
-      .get('http://localhost:8888')
-      .then(response => (this.info = response))
-      console.log(this.info);
     },
     allSet() {
       this.boardInit();
@@ -225,7 +219,7 @@ export default {
         return;
       }
       this.putDiscByEnemy();
-      while (this.isSkipTurn(this.userColor && !this.isFinshGame())) {
+      while (this.isSkipTurn(this.userColor) && !this.isFinshGame()) {
         this.putDiscByEnemy();
       }
       if (this.isFinshGame()) {
@@ -237,6 +231,8 @@ export default {
       if (this.isSkipTurn(rc)) {
         return;
       }
+      this.getPutDiscPosition();
+      // ランダム配置
       while (this.enemyrDiscCount > 0) {
         const i = Math.floor(Math.random() * 8 ) + 1;
         if (this.nextPutPositions[rc][i].length !== 0) {
@@ -294,7 +290,7 @@ export default {
       // forEach内でreturnできないため
       var bool = true;
       Object.keys(tmpRows).forEach((row) => {
-        if (tmpRows[row].length > 0) {
+       if (tmpRows[row].length > 0) {
           bool = false;
           // return false;
         }

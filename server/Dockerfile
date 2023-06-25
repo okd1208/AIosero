@@ -5,9 +5,7 @@ WORKDIR /api
 COPY . .
 ENV GO111MODULE=on
 
-RUN go get github.com/pilu/fresh
-RUN go get github.com/labstack/echo 
-RUN go get github.com/labstack/echo/middleware
-RUN go get github.com/lib/pq
+RUN go mod download
+RUN go build -o myapp ./api/cmd
 
-CMD ["fresh"]
+CMD ["fresh", "./myapp"]

@@ -4,10 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"net/http"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	api "github.com/okd1208/OthelloLearning/api/handler"
 )
 
 func SetApi() error {
@@ -17,11 +17,12 @@ func SetApi() error {
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
-	e.GET("/", func(c echo.Context) error {
-		userColor := c.QueryParam("userColor")
-		dbTest()
-		return c.String(http.StatusOK, "userColor = "+userColor)
-	})
+	e.GET("/api/v1/othello/next-move", api.GetNextMovePosition)
+	// e.GET("/api/v1/othello/next-move", func(c echo.Context) error {
+	// 	userColor := c.QueryParam("userColor")
+	// 	dbTest()
+	// 	return c.String(http.StatusOK, "userColor = "+userColor)
+	// })
 	e.Logger.Fatal(e.Start(":8888"))
 	return nil
 }

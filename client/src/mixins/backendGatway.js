@@ -1,31 +1,26 @@
-import axios from 'axios';export default {
+import axios from 'axios';
+
+const apiClient = axios.create({
+  baseURL: 'http://localhost:8888',
+});
+
+export default {
   data () {
     return {
       info: '',
     }
   },
   methods: {
-    async getPutDiscPosition() {
-      // axios
-      // .get('http://localhost:8888')
-      // .then(response => (this.info = response))
-      // console.log(this.info);
-      axios.get('http://localhost:8888', {
+    async getPutDiscPosition(userColor, positions) {
+      apiClient.get('/api/v1/othello/next-move', {
         params: {
-          userColor: 'white'
+          userColor: userColor,
+          positions: positions
         }
       })
       .then(function (response) {
         console.log(response.data);
       });
-      // await axios.request({
-      //   method: 'get',
-      //   url: 'http://localhost:8888',
-      //   data: {
-      //     firstName: 'Fred',
-      //     lastName: 'Flintstone'
-      //   }
-      // });
     },
   },
 }

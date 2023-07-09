@@ -231,7 +231,7 @@ export default {
       if (this.isSkipTurn(rc)) {
         return;
       }
-      this.getPutDiscPosition();
+      this.getPutDiscPosition(this.userColor, this.putPositions);
       // ランダム配置
       while (this.enemyrDiscCount > 0) {
         const i = Math.floor(Math.random() * 8 ) + 1;

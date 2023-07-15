@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -13,14 +12,25 @@ type OthelloRequest struct {
 	Positions map[string]map[string][]int `json:"positions"`
 }
 
-func GetNextMovePosition(req OthelloRequest) (nextMove OthelloRequest, err error) {
-	matrix := positionsToMatrix(req.Positions)
-	fmt.Println(matrix)
+type NextMove struct {
+	row int
+	col int
+}
 
-	// TODO:深層学習に基づいてnextMoveを算出
-	nextMove = req
+var clientColor = 1
+var computeColor = 2
 
-	return nextMove, nil
+func evaluateMove(matrix [][]int, moveX int, moveY int, color int) int {
+	// TODO: 評価関数を実装する
+	return 0
+}
+
+func GetNextMovePosition(req OthelloRequest) (bestMove NextMove, err error) {
+	matrix := positionsToMatrix(req.Positions, req.UserColor)
+
+	// TODO:決定木に基づいてnextMoveを算出
+
+	return bestMove, nil
 }
 
 func HandleNextMove(c echo.Context) error {
@@ -37,24 +47,33 @@ func HandleNextMove(c echo.Context) error {
 	return c.JSON(http.StatusOK, nextMove)
 }
 
-func positionsToMatrix(positions map[string]map[string][]int) [][]int {
+func positionsToMatrix(positions map[string]map[string][]int, userColor string) [][]int {
 	boardSize := 8
 	matrix := make([][]int, boardSize)
 	for i := range matrix {
 		matrix[i] = make([]int, boardSize)
 	}
 
-	// 黒の駒を2、白の駒を1
+	// クライアントを1、コンピュータ(自身)を2とする
+	blackUser := computeColor
+	whiteUser := computeColor
+
+	if userColor == "black" {
+		blackUser = clientColor
+	} else if userColor == "white" {
+		whiteUser = clientColor
+	}
+
 	for row, cols := range positions["black"] {
 		rowInt, _ := strconv.Atoi(row)
 		for _, col := range cols {
-			matrix[rowInt-1][col-1] = 2
+			matrix[rowInt-1][col-1] = blackUser
 		}
 	}
 	for row, cols := range positions["white"] {
 		rowInt, _ := strconv.Atoi(row)
 		for _, col := range cols {
-			matrix[rowInt-1][col-1] = 1
+			matrix[rowInt-1][col-1] = whiteUser
 		}
 	}
 	return matrix

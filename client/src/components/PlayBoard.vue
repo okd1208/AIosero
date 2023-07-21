@@ -17,7 +17,7 @@
 <script>
 import BackendGatway from '@/mixins/backendGatway'
 export default {
-  name: 'HelloWorld',
+  name: 'PlayBoard',
   mixins: [BackendGatway],
   data: function () {
     return {

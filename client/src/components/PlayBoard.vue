@@ -94,7 +94,7 @@ export default {
     boardInit() {
       this.userDiscCount = 0;
       this.enemyrDiscCount = 0;
-      const discs = document.querySelectorAll('.white, .black');
+      const discs = document.querySelectorAll('.white, .black, .placeable-disk');
       discs.forEach(el => {
         el.classList.remove("white");
         el.classList.remove("black");
@@ -139,9 +139,6 @@ export default {
             }
           }
         }
-      }
-      if (color === this.userColor) {
-        this.updateNextPosiUI(color);
       }
     },
     updateNextPosiUI (color) {
@@ -241,8 +238,10 @@ export default {
       }
     },
     async putDiscByEnemy() {
+      await this.waitOneSecond(500);
       const rc = this.getReverseColor(this.userColor);
       if (this.isSkipTurn(rc)) {
+        this.updateNextPosiUI(this.userColor);
         return;
       }
       const nextPosi = await this.getPutDiscPosition(this.userColor, this.putPositions);
@@ -253,6 +252,7 @@ export default {
       this.putPositions[rc][nextPosi["row"]].push(nextPosi["col"]);
       this.doReverse(nextPosi["row"], nextPosi["col"], rc);
       this.allSet();
+      this.updateNextPosiUI(this.userColor);
     },
     doReverse(row, col, color) {
       this.hitDiscsPosi = [];
@@ -313,10 +313,14 @@ export default {
           return true;
       }
       return false;
+    },
+    waitOneSecond(seconds) {
+      return new Promise(resolve => setTimeout(resolve, seconds));
     }
   },
   mounted() {
     this.allSet();
+    this.updateNextPosiUI(this.userColor);
   },
   computed: {
     getResultText: function () {

@@ -39,7 +39,7 @@ func GetNextMovePosition(req OthelloRequest) (bestMove NextMove, err error) {
 		score := evaluateMove(matrix, x, y, computeColor)
 		if score > bestScore {
 			bestScore = score
-			bestMove = NextMove{Row: x, Col: y}
+			bestMove = NextMove{Row: x + 1, Col: y + 1} // フロントの仕様上一旦+1
 		}
 	}
 

@@ -15,10 +15,10 @@
 </template>
 
 <script>
-import BackendGatway from '@/mixins/backendGatway'
+import BackendGateway from '@/mixins/backendGateway'
 export default {
   name: 'PlayBoard',
-  mixins: [BackendGatway],
+  mixins: [BackendGateway],
   data: function () {
     return {
       userColor: "white",

@@ -98,6 +98,7 @@ export default {
       discs.forEach(el => {
         el.classList.remove("white");
         el.classList.remove("black");
+        el.classList.remove("placeable-disk");
       });
       Object.keys(this.nextPutPositions).forEach((color) => {
         const tmpRows = this.nextPutPositions[color];
@@ -136,6 +137,19 @@ export default {
                 this.nextPutPositions[color][lastPosi["row"]].push(lastPosi["col"]);
               }
             }
+          }
+        }
+      }
+      if (color === this.userColor) {
+        this.updateNextPosiUI(color);
+      }
+    },
+    updateNextPosiUI (color) {
+      for (let row in this.nextPutPositions[color]) {
+        if (this.nextPutPositions[color].hasOwnProperty(row)) {
+          for (let col of this.nextPutPositions[color][row]) {
+            const element = document.getElementById(`row${row}-col${col}`);
+            element.classList.add("placeable-disk");
           }
         }
       }
@@ -351,6 +365,14 @@ export default {
 .black {
   background-color: black;
 }
+.placeable-disk {
+  margin: auto;
+  height: 50%;
+  width: 50%;
+  border-radius: 50%;
+  background-color: rgba(160, 160, 160, 0.7);
+}
+
 .result-board {
   position: absolute;
   background-color: rgba(255, 255, 255, 0.9);

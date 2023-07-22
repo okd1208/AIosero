@@ -12,13 +12,15 @@ export default {
   },
   methods: {
     async getPutDiscPosition(userColor, positions) {
-      apiClient.post('/api/v1/othello/next-move', {
-        userColor: userColor,
-        positions: positions
-      })
-      .then(function (response) {
-        console.log(response.data);
-      });
+      try {
+        const response = await apiClient.post('/api/v1/othello/next-move', {
+          userColor: userColor,
+          positions: positions
+        });
+        return response.data;
+      } catch (error) {
+        console.error(error);
+      }
     }
   },
 }

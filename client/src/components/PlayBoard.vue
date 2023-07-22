@@ -226,24 +226,19 @@ export default {
         return;
       }
     },
-    putDiscByEnemy() {
+    async putDiscByEnemy() {
       const rc = this.getReverseColor(this.userColor);
       if (this.isSkipTurn(rc)) {
         return;
       }
-      this.getPutDiscPosition(this.userColor, this.putPositions);
-      // ランダム配置
-      while (this.enemyrDiscCount > 0) {
-        const i = Math.floor(Math.random() * 8 ) + 1;
-        if (this.nextPutPositions[rc][i].length !== 0) {
-          const n = Math.floor(Math.random() * (this.nextPutPositions[rc][i].length - 1));
-          const col = this.nextPutPositions[rc][i][n];
-          this.putPositions[rc][i].push(col);
-          this.doReverse(i, col, rc);
-          this.allSet();
-          break;
-        }
+      const nextPosi = await this.getPutDiscPosition(this.userColor, this.putPositions);
+      if (!this.nextPutPositions[rc][nextPosi["row"]].includes(nextPosi["col"])) {
+        console.error("response next position is invalid");
+        return;
       }
+      this.putPositions[rc][nextPosi["row"]].push(nextPosi["col"]);
+      this.doReverse(nextPosi["row"], nextPosi["col"], rc);
+      this.allSet();
     },
     doReverse(row, col, color) {
       this.hitDiscsPosi = [];

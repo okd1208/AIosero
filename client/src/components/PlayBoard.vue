@@ -73,13 +73,6 @@ export default {
       hitDiscsPosi: []
     }
   },
-  computed: {
-    ...mapGetters([
-      'endpoint1',
-      'endpoint2',
-      'interval',
-    ])
-  },
   methods: {
     getClassName(row, col) {
       return `row${row}-col${col}`
@@ -340,7 +333,12 @@ export default {
       }
       const winnerColor = this.userDiscCount > this.enemyrDiscCount ? this.userColor : this.getReverseColor(this.userColor);
       return `${winnerColor}プレイヤーの勝利です!`
-    }
+    },
+    ...mapGetters([
+      'endpoint1',
+      'endpoint2',
+      'interval',
+    ])
   }
 }
 </script>

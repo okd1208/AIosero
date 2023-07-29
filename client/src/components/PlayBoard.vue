@@ -143,7 +143,7 @@ export default {
     },
     updateNextPosiUI (color) {
       for (let row in this.nextPutPositions[color]) {
-        if (this.nextPutPositions[color].hasOwnProperty(row)) {
+        if (row in this.nextPutPositions[color]) {
           for (let col of this.nextPutPositions[color][row]) {
             const element = document.getElementById(`row${row}-col${col}`);
             element.classList.add("placeable-disk");

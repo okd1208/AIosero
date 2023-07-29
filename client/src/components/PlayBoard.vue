@@ -16,6 +16,7 @@
 
 <script>
 import BackendGateway from '@/mixins/backendGateway'
+import { mapGetters } from 'vuex'
 export default {
   name: 'PlayBoard',
   mixins: [BackendGateway],
@@ -71,6 +72,13 @@ export default {
       },
       hitDiscsPosi: []
     }
+  },
+  computed: {
+    ...mapGetters([
+      'endpoint1',
+      'endpoint2',
+      'interval',
+    ])
   },
   methods: {
     getClassName(row, col) {
@@ -238,13 +246,13 @@ export default {
       }
     },
     async putDiscByEnemy() {
-      await this.waitOneSecond(500);
+      await this.waitOneSecond(this.interval);
       const rc = this.getReverseColor(this.userColor);
       if (this.isSkipTurn(rc)) {
         this.updateNextPosiUI(this.userColor);
         return;
       }
-      const nextPosi = await this.getPutDiscPosition(this.userColor, this.putPositions);
+      const nextPosi = await this.getPutDiscPosition(this.endpoint1 ,this.userColor, this.putPositions);
       if (!this.nextPutPositions[rc][nextPosi["row"]].includes(nextPosi["col"])) {
         console.error("response next position is invalid");
         return;

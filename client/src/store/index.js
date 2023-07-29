@@ -12,6 +12,11 @@ export default new Vuex.Store({
     },
     interval: Cookies.get('interval') || 500
   },
+  getters: {
+    endpoint1: state => state.endpoints.endpoint1,
+    endpoint2: state => state.endpoints.endpoint2,
+    interval: state => state.interval
+  },
   mutations: {
     setEndpoints(state, endpoints) {
       state.endpoints = endpoints

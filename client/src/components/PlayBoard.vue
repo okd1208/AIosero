@@ -227,14 +227,14 @@ export default {
       this.putPositions[this.userColor][row].push(col);
       this.doReverse(row, col, this.userColor);
       this.allSet();
-      if (this.isFinshGame()) {
+      if (this.isFinishGame()) {
         return;
       }
       this.putDiscByEnemy();
-      while (this.isSkipTurn(this.userColor) && !this.isFinshGame()) {
+      while (this.isSkipTurn(this.userColor) && !this.isFinishGame()) {
         this.putDiscByEnemy();
       }
-      if (this.isFinshGame()) {
+      if (this.isFinishGame()) {
         return;
       }
     },
@@ -307,7 +307,7 @@ export default {
       });
       return bool;
     },
-    isFinshGame() {
+    isFinishGame() {
       if (this.userDiscCount + this.enemyrDiscCount === 64 || 
         (this.isSkipTurn("white")&&this.isSkipTurn("black"))
         ) {
@@ -325,7 +325,7 @@ export default {
   },
   computed: {
     getResultText: function () {
-      if (!this.isFinshGame()) {
+      if (!this.isFinishGame()) {
         return null;
       }
       if (this.userDiscCount == this.enemyrDiscCount) {

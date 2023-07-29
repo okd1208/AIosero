@@ -1,7 +1,8 @@
 <template>
-  <div class="othelloboad">
+  <div>
     <h1>Leaning Othello</h1>
-    <router-link to="/playBoard">PlayOthello</router-link>
+    <div><router-link to="/playBoard">PlayOthello</router-link></div>
+    <div><router-link to="/setting">setting</router-link></div>
   </div>
 </template>
 

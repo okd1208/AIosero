@@ -6,7 +6,7 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/okd1208/OthelloLearning/domain/models"
-	"github.com/okd1208/OthelloLearning/domain/services/game"
+	"github.com/okd1208/OthelloLearning/domain/services"
 )
 
 type OthelloRequest struct {
@@ -26,7 +26,7 @@ func HandleNextMove(c echo.Context) error {
 	}
 	matrix := positionsToMatrix(req.Positions, req.UserColor)
 
-	nextMove, err := game.GetNextMovePosition(matrix)
+	nextMove, err := services.GetNextMovePosition(matrix)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}

@@ -9,6 +9,7 @@ type BoardStatus struct {
 	Board                 CellMatrix
 	ValidMovesForComputer [][]int
 	ValidMovesForClient   [][]int
+	CountEmptyCell        int
 }
 
 type NextMove struct {

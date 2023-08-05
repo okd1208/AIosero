@@ -18,9 +18,13 @@ var directions = [8][2]int{
 }
 
 func GetNextMovePosition(board models.CellMatrix) (bestMove models.NextMove, err error) {
-	validMoves := GetValidMoves(board)
+	boardStatus := models.BoardStatus{
+		Board:                 board,
+		ValidMovesForComputer: GetValidMoves(board, models.ComputeColor),
+		ValidMovesForClient:   GetValidMoves(board, models.ClientColor),
+	}
 	bestScore := -1
-	for _, point := range validMoves {
+	for _, point := range boardStatus.ValidMovesForComputer {
 		x := point[0]
 		y := point[1]
 		score := evaluateMove(board, x, y)
@@ -35,7 +39,7 @@ func GetNextMovePosition(board models.CellMatrix) (bestMove models.NextMove, err
 	return bestMove, nil
 }
 
-func GetValidMoves(board models.CellMatrix) [][]int {
+func GetValidMoves(board models.CellMatrix, myColor int) [][]int {
 	validMoves := make([][]int, 0)
 
 	for x := 0; x < len(board); x++ {
@@ -45,7 +49,7 @@ func GetValidMoves(board models.CellMatrix) [][]int {
 			}
 			for _, direction := range directions {
 				dx, dy := direction[0], direction[1]
-				if CheckMoveInDirection(board, x, y, dx, dy) {
+				if CheckMoveInDirection(board, x, y, dx, dy, myColor) {
 					validMoves = append(validMoves, []int{x, y})
 				}
 			}
@@ -56,22 +60,30 @@ func GetValidMoves(board models.CellMatrix) [][]int {
 
 // CheckMoveInDirectionは、与えられた方向(dx, dy)に対して石を置けるかどうかを探索する
 // x, y は開始位置、dx, dyは探索方向です（-1, 0, 1のいずれか）
-func CheckMoveInDirection(board models.CellMatrix, x, y, dx, dy int) bool {
+func CheckMoveInDirection(board models.CellMatrix, x, y, dx, dy int, myColor int) bool {
 	var isEnemyAdjacent bool // 敵の石が隣接しているかどうか
+	enemyColor := getReversedColor(myColor)
 	x, y = x+dx, y+dy
 	for x >= 0 && x < len(board) && y >= 0 && y < len(board[x]) {
 		if board[x][y] == 0 {
 			return false
 		}
-		if board[x][y] == models.ComputeColor {
+		if board[x][y] == myColor {
 			return isEnemyAdjacent
 		}
-		if board[x][y] == models.ClientColor && !isEnemyAdjacent {
+		if board[x][y] == enemyColor && !isEnemyAdjacent {
 			isEnemyAdjacent = true
 		}
 		x, y = x+dx, y+dy
 	}
 	return false
+}
+
+func getReversedColor(color int) int {
+	if color == 1 {
+		return 2
+	}
+	return 1
 }
 
 func evaluateMove(matrix models.CellMatrix, moveX int, moveY int) int {

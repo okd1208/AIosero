@@ -32,7 +32,7 @@ func TestGetValidMoves(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			got := GetValidMoves(tc.matrix)
+			got := GetValidMoves(tc.matrix, models.ComputeColor)
 			if !reflect.DeepEqual(got, tc.expected) {
 				t.Errorf("GetValidMoves() = %v, want %v", got, tc.expected)
 			}

@@ -17,3 +17,7 @@ func IsFinishGame(bs models.BoardStatus) bool {
 	}
 	return false
 }
+
+func IsSkipTurn(validMoves [][]int) bool {
+	return len(validMoves) == 0
+}

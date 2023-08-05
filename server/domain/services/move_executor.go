@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 
+	"github.com/okd1208/OthelloLearning/domain/helpers"
 	"github.com/okd1208/OthelloLearning/domain/models"
 )
 
@@ -22,6 +23,7 @@ func GetNextMovePosition(board models.CellMatrix) (bestMove models.NextMove, err
 		Board:                 board,
 		ValidMovesForComputer: GetValidMoves(board, models.ComputeColor),
 		ValidMovesForClient:   GetValidMoves(board, models.ClientColor),
+		CountEmptyCell:        helpers.CountEmptyCell(board),
 	}
 	bestScore := -1
 	for _, point := range boardStatus.ValidMovesForComputer {
@@ -62,7 +64,7 @@ func GetValidMoves(board models.CellMatrix, myColor int) [][]int {
 // x, y は開始位置、dx, dyは探索方向です（-1, 0, 1のいずれか）
 func CheckMoveInDirection(board models.CellMatrix, x, y, dx, dy int, myColor int) bool {
 	var isEnemyAdjacent bool // 敵の石が隣接しているかどうか
-	enemyColor := getReversedColor(myColor)
+	enemyColor := helpers.GetReversedColor(myColor)
 	x, y = x+dx, y+dy
 	for x >= 0 && x < len(board) && y >= 0 && y < len(board[x]) {
 		if board[x][y] == 0 {
@@ -77,13 +79,6 @@ func CheckMoveInDirection(board models.CellMatrix, x, y, dx, dy int, myColor int
 		x, y = x+dx, y+dy
 	}
 	return false
-}
-
-func getReversedColor(color int) int {
-	if color == 1 {
-		return 2
-	}
-	return 1
 }
 
 func evaluateMove(matrix models.CellMatrix, moveX int, moveY int) int {

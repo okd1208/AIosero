@@ -1,19 +1,21 @@
-package handler
+package game
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/okd1208/OthelloLearning/domain/models"
 )
 
 func TestGetValidMoves(t *testing.T) {
 	testCases := []struct {
 		name     string
-		matrix   [][]int
+		matrix   models.CellMatrix
 		expected [][]int
 	}{
 		{
 			name: "Initial state",
-			matrix: [][]int{
+			matrix: models.CellMatrix{
 				{0, 0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0, 0},

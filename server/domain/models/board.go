@@ -5,8 +5,10 @@ var ComputeColor = 2
 
 type CellMatrix [8][8]int
 
-type Board struct {
-	Cells CellMatrix
+type BoardStatus struct {
+	Board                 CellMatrix
+	ValidMovesForComputer [][]int
+	ValidMovesForClient   [][]int
 }
 
 type NextMove struct {

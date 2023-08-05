@@ -34,7 +34,7 @@ func HandleNextMove(c echo.Context) error {
 	return c.JSON(http.StatusOK, nextMove)
 }
 
-func positionsToMatrix(positions map[string]map[string][]int, userColor string) models.Board {
+func positionsToMatrix(positions map[string]map[string][]int, userColor string) models.CellMatrix {
 	var matrix models.CellMatrix
 
 	// クライアントを1、コンピュータ(自身)を2とする
@@ -59,5 +59,5 @@ func positionsToMatrix(positions map[string]map[string][]int, userColor string) 
 			matrix[rowInt-1][col-1] = whiteUser
 		}
 	}
-	return models.Board{Cells: matrix}
+	return matrix
 }

@@ -6,13 +6,24 @@ import (
 	"github.com/okd1208/OthelloLearning/domain/models"
 )
 
-func GetNextMovePosition(board models.Board) (bestMove models.NextMove, err error) {
-	validMoves := GetValidMoves(board.Cells)
+var directions = [8][2]int{
+	{-1, -1}, // 左上
+	{-1, 0},  // 上
+	{-1, 1},  // 右上
+	{0, -1},  // 左
+	{0, 1},   // 右
+	{1, -1},  // 左下
+	{1, 0},   // 下
+	{1, 1},   // 右下
+}
+
+func GetNextMovePosition(board models.CellMatrix) (bestMove models.NextMove, err error) {
+	validMoves := GetValidMoves(board)
 	bestScore := -1
 	for _, point := range validMoves {
 		x := point[0]
 		y := point[1]
-		score := evaluateMove(board.Cells, x, y)
+		score := evaluateMove(board, x, y)
 		if score > bestScore {
 			bestScore = score
 			bestMove = models.NextMove{Row: x + 1, Col: y + 1} // フロントの仕様上一旦+1
@@ -26,16 +37,6 @@ func GetNextMovePosition(board models.Board) (bestMove models.NextMove, err erro
 
 func GetValidMoves(board models.CellMatrix) [][]int {
 	validMoves := make([][]int, 0)
-	directions := [8][2]int{
-		{-1, -1}, // 左上
-		{-1, 0},  // 上
-		{-1, 1},  // 右上
-		{0, -1},  // 左
-		{0, 1},   // 右
-		{1, -1},  // 左下
-		{1, 0},   // 下
-		{1, 1},   // 右下
-	}
 
 	for x := 0; x < len(board); x++ {
 		for y := 0; y < len(board[x]); y++ {

@@ -34,7 +34,11 @@ func GetNextMovePosition(board models.CellMatrix) (bestMove models.NextMove, err
 	}
 
 	if bs.CountEmptyCell < 9 {
-		FullSearchStrategy(bs)
+		bestMove, err := FullSearchStrategy(bs)
+		if err != nil {
+			return models.NextMove{Row: -1, Col: -1}, err
+		}
+		return models.NextMove{Row: bestMove[0] + 1, Col: bestMove[1] + 1}, nil
 	}
 	bestScore := -1
 	for _, point := range bs.ValidMovesForComputer {

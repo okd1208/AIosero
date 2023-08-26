@@ -220,7 +220,7 @@ export default {
     getReverseColor (color) {
       return color === "white" ? "black" : "white";
     },
-    putDiscByUser(row, col) {
+    async putDiscByUser(row, col) {
       if (!this.isCanPutDisc(row, col, this.userColor)) {
         return;
       }
@@ -230,9 +230,9 @@ export default {
       if (this.isFinishGame()) {
         return;
       }
-      this.putDiscByEnemy();
-      while (this.isSkipTurn(this.userColor) && !this.isFinishGame()) {
-        this.putDiscByEnemy();
+      await this.putDiscByEnemy();
+      while (!this.isFinishGame() && this.isSkipTurn(this.userColor)) {
+        await this.putDiscByEnemy();
       }
       if (this.isFinishGame()) {
         return;
@@ -242,6 +242,7 @@ export default {
       await this.waitOneSecond(this.interval);
       const rc = this.getReverseColor(this.userColor);
       if (this.isSkipTurn(rc)) {
+        console.log("enemy's turn is skip");
         this.updateNextPosiUI(this.userColor);
         return;
       }
@@ -300,17 +301,19 @@ export default {
       // forEach内でreturnできないため
       var bool = true;
       Object.keys(tmpRows).forEach((row) => {
-       if (tmpRows[row].length > 0) {
-          bool = false;
-          // return false;
-        }
+        if (tmpRows[row].length > 0) {
+            bool = false;
+            // return false;
+          }
       });
+      if (bool) console.log(color + " payer is skip");
       return bool;
     },
     isFinishGame() {
       if (this.userDiscCount + this.enemyrDiscCount === 64 || 
         (this.isSkipTurn("white")&&this.isSkipTurn("black"))
         ) {
+          console.log("game finished!");
           return true;
       }
       return false;

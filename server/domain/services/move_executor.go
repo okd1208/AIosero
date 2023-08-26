@@ -40,11 +40,11 @@ func GetNextMovePosition(board models.CellMatrix) (bestMove models.NextMove, err
 		}
 		return models.NextMove{Row: bestMove[0] + 1, Col: bestMove[1] + 1}, nil
 	}
-	bestScore := -1
+	bestScore := -1000
 	for _, point := range bs.ValidMovesForComputer {
 		x := point[0]
 		y := point[1]
-		score := evaluateMove(board, x, y)
+		score := EvaluateMoveOption(board, x, y)
 		if score > bestScore {
 			bestScore = score
 			bestMove = models.NextMove{Row: x + 1, Col: y + 1} // フロントの仕様上一旦+1

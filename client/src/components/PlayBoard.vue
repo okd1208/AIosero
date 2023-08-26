@@ -26,6 +26,7 @@ export default {
       userDiscCount: 0,
       enemyrDiscCount: 0,
       isUserTurn: true,
+      isAutoPut: true,
       putPositions: {
         white: {
           1:[],
@@ -236,6 +237,15 @@ export default {
       }
       if (this.isFinishGame()) {
         return;
+      }
+      if (this.isAutoPut) {
+        await this.waitOneSecond(this.interval);
+        const npp = this.nextPutPositions[this.userColor];
+        const nonEmptyKeys = Object.keys(npp).filter(key => npp[key].length > 0);
+        const randomKey = Number(nonEmptyKeys[Math.floor(Math.random() * nonEmptyKeys.length)]);
+        const arrayForKey = npp[randomKey];
+        const randomValue = arrayForKey[0];
+        await this.putDiscByUser(randomKey, randomValue)
       }
     },
     async putDiscByEnemy() {

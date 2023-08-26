@@ -24,7 +24,7 @@ export default {
     return {
       userColor: "white",
       userDiscCount: 0,
-      enemyrDiscCount: 0,
+      enemyDiscCount: 0,
       isUserTurn: true,
       isAutoPut: true,
       putPositions: {
@@ -85,7 +85,7 @@ export default {
         const tmpRows = putPosi[color];
         Object.keys(tmpRows).forEach((row) => {
           tmpRows[row].forEach(col => {
-            color === this.userColor ? this.userDiscCount += 1 : this.enemyrDiscCount += 1;
+            color === this.userColor ? this.userDiscCount += 1 : this.enemyDiscCount += 1;
             this.updateNextPosi(row, col, color);
             const element = document.getElementById(`row${row}-col${col}`);
             element.classList.add(color);
@@ -95,7 +95,7 @@ export default {
     },
     boardInit() {
       this.userDiscCount = 0;
-      this.enemyrDiscCount = 0;
+      this.enemyDiscCount = 0;
       const discs = document.querySelectorAll('.white, .black, .placeable-disk');
       discs.forEach(el => {
         el.classList.remove("white");
@@ -320,7 +320,7 @@ export default {
       return bool;
     },
     isFinishGame() {
-      if (this.userDiscCount + this.enemyrDiscCount === 64 || 
+      if (this.userDiscCount + this.enemyDiscCount === 64 || 
         (this.isSkipTurn("white")&&this.isSkipTurn("black"))
         ) {
           console.log("game finished!");
@@ -341,10 +341,10 @@ export default {
       if (!this.isFinishGame()) {
         return null;
       }
-      if (this.userDiscCount == this.enemyrDiscCount) {
+      if (this.userDiscCount == this.enemyDiscCount) {
         return "引き分けです。";
       }
-      const winnerColor = this.userDiscCount > this.enemyrDiscCount ? this.userColor : this.getReverseColor(this.userColor);
+      const winnerColor = this.userDiscCount > this.enemyDiscCount ? this.userColor : this.getReverseColor(this.userColor);
       return `${winnerColor}プレイヤーの勝利です!`
     },
     ...mapGetters([

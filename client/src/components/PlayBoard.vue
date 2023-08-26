@@ -299,15 +299,15 @@ export default {
     isSkipTurn(color) {
       const tmpRows = this.nextPutPositions[color];
       // forEach内でreturnできないため
-      var bool = true;
+      var isSkip = true;
       Object.keys(tmpRows).forEach((row) => {
         if (tmpRows[row].length > 0) {
-            bool = false;
+            isSkip = false;
             // return false;
           }
       });
-      if (bool) console.log(color + " payer is skip");
-      return bool;
+      if (isSkip) console.log(color + " payer is skip");
+      return isSkip;
     },
     isFinishGame() {
       if (this.userDiscCount + this.enemyrDiscCount === 64 || 

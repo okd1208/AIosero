@@ -297,7 +297,7 @@ export default {
     },
     reverseTarget(row, col, color){
       const rc = this.getReverseColor(color);
-      var index = this.putPositions[rc][row].indexOf(col);
+      let index = this.putPositions[rc][row].indexOf(col);
       this.putPositions[rc][row].splice(index, 1);
       this.putPositions[color][row].push(col);
     },
@@ -309,15 +309,15 @@ export default {
     isSkipTurn(color) {
       const tmpRows = this.nextPutPositions[color];
       // forEach内でreturnできないため
-      var isSkip = true;
+      let bool = true;
       Object.keys(tmpRows).forEach((row) => {
         if (tmpRows[row].length > 0) {
-            isSkip = false;
+            bool = false;
             // return false;
           }
       });
-      if (isSkip) console.log(color + " payer is skip");
-      return isSkip;
+      if (bool) console.log(color + " payer is skip");
+      return bool;
     },
     isFinishGame() {
       if (this.userDiscCount + this.enemyrDiscCount === 64 || 

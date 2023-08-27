@@ -46,6 +46,11 @@ func minimax(bs models.BoardStatus, depth int, isComputerTurn bool) int {
 
 	if isComputerTurn {
 		maxEval := -100000
+		if IsSkipTurn(bs.ValidMovesForComputer) {
+			eval := minimax(bs, depth, false)
+			maxEval = max(maxEval, eval)
+			return maxEval
+		}
 		for _, move := range bs.ValidMovesForComputer {
 			nb, _ := GetNextBoard(bs.Board, move[0], move[1])
 			newBS := models.BoardStatus{
@@ -60,6 +65,11 @@ func minimax(bs models.BoardStatus, depth int, isComputerTurn bool) int {
 		return maxEval
 	} else {
 		minEval := 100000
+		if IsSkipTurn(bs.ValidMovesForClient) {
+			eval := minimax(bs, depth, true)
+			minEval = min(minEval, eval)
+			return minEval
+		}
 		for _, move := range bs.ValidMovesForClient {
 			nb, _ := GetNextBoard(bs.Board, move[0], move[1])
 			newBS := models.BoardStatus{

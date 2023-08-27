@@ -13,6 +13,7 @@ type PositionalWeight struct {
 }
 
 var weights = []PositionalWeight{
+	//  TODO: weightの調整
 	{Position: Position{0, 1}, Weight: -30},
 	{Position: Position{1, 0}, Weight: -30},
 	{Position: Position{1, 1}, Weight: -50},
@@ -25,6 +26,10 @@ var weights = []PositionalWeight{
 	{Position: Position{7, 6}, Weight: -30},
 	{Position: Position{6, 7}, Weight: -30},
 	{Position: Position{6, 6}, Weight: -50},
+	{Position: Position{0, 0}, Weight: 30},
+	{Position: Position{7, 0}, Weight: 30},
+	{Position: Position{0, 7}, Weight: 30},
+	{Position: Position{7, 7}, Weight: 30},
 }
 
 func EvaluateMoveOption(board models.CellMatrix, x int, y int) int {

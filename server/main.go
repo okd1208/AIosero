@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/okd1208/OthelloLearning/pkg/database"
+	"github.com/okd1208/OthelloLearning/internal/database"
 	"github.com/okd1208/OthelloLearning/routes"
 
 	// postgres ドライバ

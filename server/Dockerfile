@@ -1,5 +1,5 @@
 # 開発環境
-FROM golang:1.17
+FROM golang:1.18
 
 WORKDIR /app
 
@@ -12,6 +12,4 @@ ENV GO111MODULE=on
 
 RUN go build -o myapp .
 
-RUN go get github.com/pilu/fresh
-
-CMD ["fresh"]
+RUN go install github.com/cosmtrek/air@latest

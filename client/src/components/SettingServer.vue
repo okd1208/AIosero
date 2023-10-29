@@ -49,6 +49,7 @@ export default {
     submitForm() {
       this.saveEndpoints(this.endpoints);
       this.saveInterval(this.interval);
+      this.$router.push('/')
     },
   },
 }

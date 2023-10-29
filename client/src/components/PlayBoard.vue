@@ -16,7 +16,7 @@
 
 <script>
 import BackendGateway from '@/mixins/backendGateway'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'PlayBoard',
   mixins: [BackendGateway],
@@ -75,6 +75,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['saveGameID']),
     getClassName(row, col) {
       return `row${row}-col${col}`
     },
@@ -332,9 +333,11 @@ export default {
       return new Promise(resolve => setTimeout(resolve, seconds));
     }
   },
-  mounted() {
+  async mounted() {
     this.allSet();
     this.updateNextPosiUI(this.userColor);
+    const gameId = await this.createGameID();
+    this.saveGameID(gameId);
   },
   computed: {
     getResultText: function () {
@@ -351,6 +354,7 @@ export default {
       'endpoint1',
       'endpoint2',
       'interval',
+      'gameId'
     ])
   }
 }

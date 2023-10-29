@@ -10,12 +10,14 @@ export default new Vuex.Store({
       endpoint1: Cookies.get('endpoint1') || '',
       endpoint2: Cookies.get('endpoint2') || '',
     },
-    interval: Cookies.get('interval') || 500
+    interval: Cookies.get('interval') || 500,
+    gameId: null
   },
   getters: {
     endpoint1: state => state.endpoints.endpoint1,
     endpoint2: state => state.endpoints.endpoint2,
-    interval: state => state.interval
+    interval: state => state.interval,
+    gameId: state => state.gameId
   },
   mutations: {
     setEndpoints(state, endpoints) {
@@ -23,6 +25,9 @@ export default new Vuex.Store({
     },
     setInterval(state, interval) {
       state.interval = interval
+    },
+    setGameID(state, gameId) {
+      state.gameId = gameId
     }
   },
   actions: {
@@ -38,6 +43,9 @@ export default new Vuex.Store({
     saveInterval({commit}, interval) {
       Cookies.set('interval', interval)
       commit('setInterval', interval)
+    },
+    saveGameID({commit}, id) {
+      commit('setGameID', id)
     }
   }
 })

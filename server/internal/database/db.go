@@ -9,9 +9,9 @@ import (
 )
 
 type Game struct {
-	ID            uint      `gorm:"primaryKey"`
-	CreateAt      time.Time `gorm:"autoCreateTime"`
-	isComputerWin bool
+	ID            uint         `gorm:"primaryKey"`
+	CreateAt      time.Time    `gorm:"autoCreateTime"`         // CreateAt を CreatedAt に変更
+	IsComputerWin *bool        `gorm:"column:is_computer_win"` // 最初の文字を大文字に変更
 	BoardStates   []BoardState `gorm:"foreignKey:GameID"`
 }
 
@@ -42,4 +42,17 @@ func InitDB() error {
 	}
 
 	return nil
+}
+
+func CreateNewGame() (uint, error) {
+	newGame := Game{
+		IsComputerWin: nil,
+		CreateAt:      time.Now(),
+	}
+
+	if err := DB.Create(&newGame).Error; err != nil {
+		return 0, err
+	}
+
+	return newGame.ID, nil
 }

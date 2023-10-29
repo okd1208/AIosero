@@ -17,6 +17,7 @@ func SetApi() error {
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
+	e.GET("/api/v1/othello/newGameId", handler.CreateNewGame)
 	e.POST("/api/v1/othello/next-move", handler.HandleNextMove)
 	e.Logger.Fatal(e.Start(":8888"))
 	return nil

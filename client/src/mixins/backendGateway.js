@@ -11,11 +11,14 @@ export default {
     }
   },
   methods: {
-    async getPutDiscPosition(endpoint, userColor, positions) {
+    async getPutDiscPosition(endpoint, userColor, positions, gameId, turn, lastPut) {
       try {
         const response = await axios.post(endpoint, {
           userColor: userColor,
-          positions: positions
+          positions: positions,
+          gameId: gameId,
+          turn: turn,
+          lastPut: lastPut
         });
         return response.data;
       } catch (error) {

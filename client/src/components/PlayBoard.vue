@@ -27,6 +27,11 @@ export default {
       enemyDiscCount: 0,
       isUserTurn: true,
       isAutoPut: true,
+      turn: 0,
+      lastPut: {
+        row: -1,
+        col: -1
+      },
       putPositions: {
         white: {
           1:[],
@@ -228,10 +233,12 @@ export default {
       }
       this.putPositions[this.userColor][row].push(col);
       this.doReverse(row, col, this.userColor);
+      this.lastPut = {row: row, col: col}
       this.allSet();
       if (this.isFinishGame()) {
         return;
       }
+      this.turn++;
       await this.putDiscByEnemy();
       while (!this.isFinishGame() && this.isSkipTurn(this.userColor)) {
         await this.putDiscByEnemy();
@@ -257,7 +264,8 @@ export default {
         this.updateNextPosiUI(this.userColor);
         return;
       }
-      const nextPosi = await this.getPutDiscPosition(this.endpoint1 ,this.userColor, this.putPositions);
+      const nextPosi = await this.getPutDiscPosition(this.endpoint1 ,this.userColor, this.putPositions, this.gameId, this.turn, this.lastPut);
+      this.turn++;
       if (!this.nextPutPositions[rc][nextPosi["row"]].includes(nextPosi["col"])) {
         console.error("response next position is invalid");
         return;

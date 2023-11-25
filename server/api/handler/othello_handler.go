@@ -7,11 +7,15 @@ import (
 	"github.com/labstack/echo"
 	"github.com/okd1208/OthelloLearning/domain/models"
 	"github.com/okd1208/OthelloLearning/domain/services"
+	"github.com/okd1208/OthelloLearning/internal/database"
 )
 
 type OthelloRequest struct {
 	UserColor string                      `json:"userColor"`
 	Positions map[string]map[string][]int `json:"positions"`
+	GameID    int                         `json:"gameId"`
+	Turn      int                         `json:"turn"`
+	LastPut   map[string]int              `json:"lastPut"`
 }
 
 type NextMove struct {
@@ -26,11 +30,24 @@ func HandleNextMove(c echo.Context) error {
 	}
 	matrix := positionsToMatrix(req.Positions, req.UserColor)
 
+	lastPut := map[string]int{
+		"row": req.LastPut["row"] - 1,
+		"col": req.LastPut["col"] - 1,
+	}
+
+	database.UpdateBoardState(req.GameID, req.Turn, matrix, true, lastPut["row"], lastPut["col"])
 	nextMove, err := services.GetNextMovePosition(matrix)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
+	newMatrix, err := services.GetNextBoard(matrix, nextMove.Row, nextMove.Col)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	database.UpdateBoardState(req.GameID, req.Turn+1, newMatrix, false, nextMove.Row, nextMove.Col)
+	nextMove.Row = nextMove.Row + 1 // フロントの仕様上一旦+1
+	nextMove.Col = nextMove.Col + 1
 	return c.JSON(http.StatusOK, nextMove)
 }
 

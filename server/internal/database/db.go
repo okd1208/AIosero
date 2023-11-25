@@ -1,9 +1,11 @@
 package database
 
 import (
+	"encoding/json"
 	"time"
 
 	_ "github.com/lib/pq"
+	"github.com/okd1208/OthelloLearning/domain/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -16,10 +18,10 @@ type Game struct {
 }
 
 type BoardState struct {
-	ID                   uint `gorm:"primaryKey"`
+	ID                   int `gorm:"primaryKey"`
 	GameID               uint
 	Turn                 int
-	Board                string
+	Board                string `gorm:"type:json"` // 二次元配列をJSON文字列として保存
 	IsLastMoveByComputer bool
 	LastMoveX            int
 	LastMoveY            int
@@ -55,4 +57,29 @@ func CreateNewGame() (uint, error) {
 	}
 
 	return newGame.ID, nil
+}
+
+func UpdateBoardState(gameID int, turn int, board models.CellMatrix, isLastMoveByComputer bool, lastMoveX, lastMoveY int) error {
+	// boardをJSON文字列に変換する処理。encoding/jsonパッケージを使用。
+	boardJSON, err := json.Marshal(board)
+	if err != nil {
+		return err
+	}
+
+	// 新しいBoardStateを作成
+	newBoardState := BoardState{
+		GameID:               uint(gameID),
+		Turn:                 turn,
+		Board:                string(boardJSON),
+		IsLastMoveByComputer: isLastMoveByComputer,
+		LastMoveX:            lastMoveX,
+		LastMoveY:            lastMoveY,
+	}
+
+	// データベースに保存
+	if err := DB.Create(&newBoardState).Error; err != nil {
+		return err
+	}
+
+	return nil
 }

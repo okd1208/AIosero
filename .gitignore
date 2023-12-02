@@ -3,6 +3,7 @@ node_modules
 client/dist
 server/tmp
 
+postgres/data/
 
 # local env files
 .env.local

@@ -25,6 +25,20 @@ export default {
         console.error(error);
       }
     },
+    async sendGameResult(userColor, positions, gameId, turn, lastPut) {
+      try {
+        const response = await apiClient.post("/api/v1/othello/finishGame", {
+          userColor: userColor,
+          positions: positions,
+          gameId: gameId,
+          turn: turn,
+          lastPut: lastPut
+        });
+        return response.data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
     async createGameID() {
       try {
         const response = await apiClient.get("/api/v1/othello/newGameId");

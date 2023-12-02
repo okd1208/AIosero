@@ -329,10 +329,12 @@ export default {
       return bool;
     },
     isFinishGame() {
-      if (this.userDiscCount + this.enemyDiscCount === 64 || 
+      if(this.turn == 0) return;
+      if (this.turn && this.userDiscCount + this.enemyDiscCount === 64 || 
         (this.isSkipTurn("white")&&this.isSkipTurn("black"))
         ) {
           console.log("game finished!");
+          this.sendGameResult(this.userColor, this.putPositions, this.gameId, this.turn, this.lastPut);
           return true;
       }
       return false;
@@ -345,6 +347,7 @@ export default {
     this.allSet();
     this.updateNextPosiUI(this.userColor);
     const gameId = await this.createGameID();
+    console.log(gameId);
     this.saveGameID(gameId);
   },
   computed: {

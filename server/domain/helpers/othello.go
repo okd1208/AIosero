@@ -14,6 +14,30 @@ func CountEmptyCell(board models.CellMatrix) int {
 	return count
 }
 
+func CountClientCell(board models.CellMatrix) int {
+	count := 0
+	for _, row := range board {
+		for _, cell := range row {
+			if cell == 1 {
+				count++
+			}
+		}
+	}
+	return count
+}
+
+func CountComputerCell(board models.CellMatrix) int {
+	count := 0
+	for _, row := range board {
+		for _, cell := range row {
+			if cell == 2 {
+				count++
+			}
+		}
+	}
+	return count
+}
+
 func GetReversedColor(color int) int {
 	if color == 1 {
 		return 2

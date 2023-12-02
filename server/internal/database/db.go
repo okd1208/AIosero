@@ -2,6 +2,8 @@ package database
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -10,10 +12,15 @@ import (
 	"gorm.io/gorm"
 )
 
+var ErrRecordNotFound = errors.New("not found")
+
 type Game struct {
-	ID            uint         `gorm:"primaryKey"`
-	CreateAt      time.Time    `gorm:"autoCreateTime"`         // CreateAt を CreatedAt に変更
-	IsComputerWin *bool        `gorm:"column:is_computer_win"` // 最初の文字を大文字に変更
+	ID            uint      `gorm:"primaryKey"`
+	CreateAt      time.Time `gorm:"autoCreateTime"`
+	IsComputerWin *bool     `gorm:"column:is_computer_win"`
+	TotalTurn     int
+	UserCount     int
+	ComputerCount int
 	BoardStates   []BoardState `gorm:"foreignKey:GameID"`
 }
 
@@ -49,12 +56,12 @@ func InitDB() error {
 func CreateNewGame() (uint, error) {
 	newGame := Game{
 		IsComputerWin: nil,
-		CreateAt:      time.Now(),
 	}
 
 	if err := DB.Create(&newGame).Error; err != nil {
 		return 0, err
 	}
+	fmt.Printf("(%%#v) %#v\n", &newGame)
 
 	return newGame.ID, nil
 }
@@ -66,7 +73,6 @@ func UpdateBoardState(gameID int, turn int, board models.CellMatrix, isLastMoveB
 		return err
 	}
 
-	// 新しいBoardStateを作成
 	newBoardState := BoardState{
 		GameID:               uint(gameID),
 		Turn:                 turn,
@@ -78,6 +84,40 @@ func UpdateBoardState(gameID int, turn int, board models.CellMatrix, isLastMoveB
 
 	// データベースに保存
 	if err := DB.Create(&newBoardState).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetBoardState(gameID int, turn int) (*BoardState, error) {
+	var boardState BoardState
+	err := DB.Where("game_id = ? AND turn = ?", uint(gameID), turn).First(&boardState).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			// カスタムエラーを返す
+			return nil, ErrRecordNotFound
+		}
+		return nil, err
+	}
+	return &boardState, nil
+}
+
+func UpdateGameResult(gameID, userCount, computerCount, turn int, isComputerWon bool) error {
+	var game Game
+
+	err := DB.First(&game, gameID).Error
+	if err != nil {
+		return err
+	}
+
+	game.IsComputerWin = &isComputerWon
+	game.TotalTurn = turn
+	game.UserCount = userCount
+	game.ComputerCount = computerCount
+
+	err = DB.Save(&game).Error
+	if err != nil {
 		return err
 	}
 

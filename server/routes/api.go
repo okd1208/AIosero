@@ -19,6 +19,7 @@ func SetApi() error {
 	}))
 	e.GET("/api/v1/othello/newGameId", handler.CreateNewGame)
 	e.POST("/api/v1/othello/next-move", handler.HandleNextMove)
+	e.POST("/api/v1/othello/finishGame", handler.CollectFinishGameData)
 	e.Logger.Fatal(e.Start(":8888"))
 	return nil
 }
